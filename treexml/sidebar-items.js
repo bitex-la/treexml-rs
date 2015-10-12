@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["XmlVersion","Enumeration of XML versions"]],"struct":[["Document","An XML document"],["Element","An XML element"]]});
