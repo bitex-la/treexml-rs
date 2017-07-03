@@ -274,6 +274,33 @@ impl Element {
         self.children.iter_mut().find(predicate)
     }
 
+    /// Transverse element using an xpath-like string: root/child/a
+    pub fn find(&self, path: &str) -> Option<&Element> {
+        Self::find_path(&path.split('/').collect::<Vec<&str>>(), &self)
+    }
+
+    pub fn find_text(&self, path: &str) -> &str {
+        self.find(path)
+            .expect(&format!("Could not find {:?}", path))
+            .text.as_ref()
+            .expect(&format!("Path {:?} to have text", path))
+    }
+
+    pub fn find_int(&self, path: &str) -> i32 {
+        self.find_text(path)
+            .parse()
+            .expect(&format!("Path {:?} to be an int", path))
+    }
+
+    fn find_path<'a>(path: &[&str], tree: &'a Element) -> Option<&'a Element> {
+        if path.len() == 0 {
+            return Some(tree);
+        }
+
+        tree.find_child(|t| t.name == path[0])
+            .and_then(|element| Self::find_path(&path[1..], element) )
+    }
+
     /// Filters the children of the current `Element`, given a predicate
     pub fn filter_children<P>(&self, predicate: P) -> Filter<Iter<Element>, P>
         where P: for<'r> Fn(&'r &Element) -> bool
@@ -287,7 +314,6 @@ impl Element {
     {
         self.children.iter_mut().filter(predicate)
     }
-
 }
 
 impl fmt::Display for Element {
@@ -297,7 +323,7 @@ impl fmt::Display for Element {
             .. Document::default()
         };
         let mut v = Vec::<u8>::new();
-        doc._write(&mut v, false, "  ").unwrap();
+        doc.write_with(&mut v, false, "  ", true).unwrap();
         let s = String::from_utf8(v).unwrap();
         f.write_str(&s[..])
     }
@@ -383,16 +409,18 @@ impl Document {
     }
 
     pub fn write<W: Write>(&self, mut w: &mut W) -> Result<(), Error> {
-        self._write(&mut w, true, "  ")
+        self.write_with(&mut w, true, "  ", true)
     }
 
     /// Writes a document to `w`
-    fn _write<W: Write>(&self, w: &mut W, document_decl: bool, indent_str: &'static str) -> Result<(), Error> {
+    pub fn write_with<W: Write>(&self, w: &mut W, document_decl: bool,
+        indent_str: &'static str, indent: bool) -> Result<(), Error> 
+    {
 
         use xml::writer::{EmitterConfig, XmlEvent};
 
         let mut writer = EmitterConfig::new()
-            .perform_indent(true)
+            .perform_indent(indent)
             .write_document_declaration(document_decl)
             .indent_string(indent_str)
             .create_writer(w);

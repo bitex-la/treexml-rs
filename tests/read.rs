@@ -249,6 +249,77 @@ mod read {
 
         }
 
+        #[test]
+        fn find() {
+
+            let doc_raw = r#"
+            <root>
+                <a>
+                    <deep>
+                        <tree>
+                            <leaf>1</leaf>
+                        </tree>
+                    </deep>
+                </a>
+                <child>2</child>
+            </root>
+            "#;
+
+            let doc = Document::parse(doc_raw.as_bytes()).unwrap();
+            let root = doc.root.unwrap();
+
+            let mut leaf = Element::new("leaf");
+            leaf.text = Some("1".to_owned());
+
+            assert_eq!(root.find("a/deep/tree/leaf"), Some(&leaf));
+
+        }
+
+        #[test]
+        fn find_text() {
+
+            let doc_raw = r#"
+            <root>
+                <a>
+                    <deep>
+                        <tree>
+                            <leaf>hello</leaf>
+                        </tree>
+                    </deep>
+                </a>
+                <child>2</child>
+            </root>
+            "#;
+
+            let doc = Document::parse(doc_raw.as_bytes()).unwrap();
+            let root = doc.root.unwrap();
+
+            assert_eq!(root.find_text("a/deep/tree/leaf"), "hello");
+
+        }
+
+        #[test]
+        fn find_int() {
+
+            let doc_raw = r#"
+            <root>
+                <a>
+                    <deep>
+                        <tree>
+                            <leaf>1</leaf>
+                        </tree>
+                    </deep>
+                </a>
+                <child>2</child>
+            </root>
+            "#;
+
+            let doc = Document::parse(doc_raw.as_bytes()).unwrap();
+            let root = doc.root.unwrap();
+
+            assert_eq!(root.find_int("a/deep/tree/leaf"), 1);
+
+        }
     }
 
     mod cdata {
