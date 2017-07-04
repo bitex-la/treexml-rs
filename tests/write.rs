@@ -174,10 +174,13 @@ mod write {
         fn incremental_builder() {
 
             let root = Element::new("root").children(vec![
-               Element::new("list")
-            ])
-
-            root.cdata = Some("data".to_owned());
+                Element::new("list").children(vec![
+                    Element::new("child"),
+                    Element::new("child").attr("class", "foo").text("bar"),
+                    Element::new("child").attr("class", 22.to_string())
+                        .text(11.to_string()),
+                ]),
+            ]);
 
             let doc = Document{
                 root: Some(root),
@@ -192,7 +195,6 @@ mod write {
                 "    <child class=\"foo\">bar</child>\n",
                 "    <child class=\"22\">11</child>\n",
                 "  </list>\n",
-                "  <![CDATA[data]]>\n",
                 "</root>"
             );
 
