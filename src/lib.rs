@@ -157,6 +157,11 @@ impl Element {
         Element{name: name.into(), .. Element::default()}
     }
 
+    pub fn children(self, children: Vec<Element>) -> Element {
+        self.children.append(children);
+        self
+    }
+
     /// Parse the contents of an element
     fn parse<R: Read>(&mut self, mut reader: &mut xml::reader::EventReader<R>) -> Result<(), Error> {
 

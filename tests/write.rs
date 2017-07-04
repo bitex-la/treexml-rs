@@ -173,7 +173,10 @@ mod write {
         #[test]
         fn incremental_builder() {
 
-            let mut root = Element::new("root");
+            let root = Element::new("root").children(vec![
+               Element::new("list")
+            ])
+
             root.cdata = Some("data".to_owned());
 
             let doc = Document{
