@@ -167,36 +167,4 @@ mod write {
 
     }
 
-    mod builder {
-        use treexml::{Document, Element};
-
-        #[test]
-        fn incremental_builder() {
-
-            let mut root = Element::new("root");
-            root.cdata = Some("data".to_owned());
-
-            let doc = Document{
-                root: Some(root),
-                .. Document::default()
-            };
-
-            let doc_ref = concat!(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
-                "<root>\n",
-                "  <list>\n",
-                "    <child />\n",
-                "    <child class=\"foo\">bar</child>\n",
-                "    <child class=\"22\">11</child>\n",
-                "  </list>\n",
-                "  <![CDATA[data]]>\n",
-                "</root>"
-            );
-
-            assert_eq!(doc.to_string(), doc_ref);
-
-        }
-
-    }
-
 }
