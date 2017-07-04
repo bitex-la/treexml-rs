@@ -9,7 +9,7 @@ To use `treexml`, add the following to your project's `Cargo.toml`
 
 ```toml
 [dependencies]
-treexml = "0.2"
+treexml = "0.3"
 ```
 
 The package exposes a crate named `treexml`.
@@ -19,8 +19,6 @@ extern crate treexml;
 ```
 
 ## Reading XML Data
-
-Assuming `r` is something that implements `std::io::Read`:
 
 ```rust
 extern crate treexml;
@@ -48,7 +46,7 @@ fn main() {
 
 ## Writing XML Data
 
-```
+```rust
 extern crate treexml;
 
 use treexml::{Document, Element};

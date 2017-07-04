@@ -3,7 +3,7 @@ extern crate treexml;
 mod write {
 
     mod document {
-        
+
         use treexml::{Document, Element};
 
         #[test]
@@ -13,11 +13,11 @@ mod write {
             let child = Element::new("child");
             root.children.push(child);
 
-            let doc = Document{
+            let doc = Document {
                 root: Some(root),
-                .. Document::default()
+                ..Document::default()
             };
-        
+
             let doc_ref = concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root>\n",
@@ -36,16 +36,18 @@ mod write {
             let child = Element::new("child");
             root.children.push(child);
 
-            let doc = Document{
+            let doc = Document {
                 root: Some(root),
-                .. Document::default()
+                ..Document::default()
             };
 
             let mut condensed = vec![];
             doc.write_with(&mut condensed, false, "", false).unwrap();
-        
-            assert_eq!(String::from_utf8(condensed).unwrap(),
-                "<root><child /></root>");
+
+            assert_eq!(
+                String::from_utf8(condensed).unwrap(),
+                "<root><child /></root>"
+            );
         }
 
     }
@@ -62,9 +64,9 @@ mod write {
             let child2 = Element::new("child").clone();
             root.children.push(child);
 
-            let _ = Document{
+            let _ = Document {
                 root: Some(root),
-                .. Document::default()
+                ..Document::default()
             };
 
             let elem_ref = "<child />";
@@ -85,12 +87,13 @@ mod write {
             let mut root = Element::new("root");
             root.text = Some("text".to_owned());
 
-            let doc = Document{
+            let doc = Document {
                 root: Some(root),
-                .. Document::default()
+                ..Document::default()
             };
 
-            let doc_ref = concat!(
+            let doc_ref =
+                concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root>text</root>",
             );
@@ -105,12 +108,13 @@ mod write {
             let mut root = Element::new("root");
             root.text = Some("<tag />".to_owned());
 
-            let doc = Document{
+            let doc = Document {
                 root: Some(root),
-                .. Document::default()
+                ..Document::default()
             };
 
-            let doc_ref = concat!(
+            let doc_ref =
+                concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root>&lt;tag /></root>",
             );
@@ -131,12 +135,13 @@ mod write {
             let mut root = Element::new("root");
             root.cdata = Some("data".to_owned());
 
-            let doc = Document{
+            let doc = Document {
                 root: Some(root),
-                .. Document::default()
+                ..Document::default()
             };
 
-            let doc_ref = concat!(
+            let doc_ref =
+                concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root><![CDATA[data]]></root>",
             );
@@ -151,12 +156,13 @@ mod write {
             let mut root = Element::new("root");
             root.cdata = Some("<tag />".to_owned());
 
-            let doc = Document{
+            let doc = Document {
                 root: Some(root),
-                .. Document::default()
+                ..Document::default()
             };
 
-            let doc_ref = concat!(
+            let doc_ref =
+                concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root><![CDATA[<tag />]]></root>",
             );
@@ -177,8 +183,7 @@ mod write {
                 Element::new("list").children(vec![
                     Element::new("child"),
                     Element::new("child").attr("class", "foo").text("bar"),
-                    Element::new("child").attr("class", 22.to_string())
-                        .text(11.to_string()),
+                    Element::new("child").attr("class", 22).text(11),
                 ]),
             ]);
 
@@ -203,5 +208,4 @@ mod write {
         }
 
     }
-
 }

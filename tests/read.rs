@@ -3,7 +3,7 @@ extern crate treexml;
 mod read {
 
     mod document {
-        
+
         use treexml::{Document, XmlVersion};
 
         #[test]
@@ -113,7 +113,7 @@ mod read {
 
     mod element {
 
-        use treexml::{Document, Element};
+        use treexml::{Document, Element, Error, ErrorKind, Result};
 
         #[test]
         fn find_child_none() {
@@ -232,7 +232,8 @@ mod read {
             let mut root = doc.root.unwrap();
 
             {
-                let mut children: Vec<&mut Element> = root.filter_children_mut(|t| t.name == "child").collect();
+                let mut children: Vec<&mut Element> =
+                    root.filter_children_mut(|t| t.name == "child").collect();
                 children[0].text = Some("4".to_owned());
                 children[1].text = Some("5".to_owned());
             }
@@ -271,54 +272,38 @@ mod read {
             let mut leaf = Element::new("leaf");
             leaf.text = Some("1".to_owned());
 
-            assert_eq!(root.find("a/deep/tree/leaf"), Some(&leaf));
+            assert_eq!(root.find("a/deep/tree/leaf").unwrap(), &leaf);
+
+            match root.find("z").unwrap_err() {
+                Error(ErrorKind::ElementNotFound(_), _) => {},
+                _ => panic!("Error should have been ElementNotFound"),
+            }
 
         }
 
         #[test]
-        fn find_text() {
+        fn find_value() {
 
             let doc_raw = r#"
             <root>
-                <a>
-                    <deep>
-                        <tree>
-                            <leaf>hello</leaf>
-                        </tree>
-                    </deep>
-                </a>
-                <child>2</child>
+                <number>2</number>
+                <word>hello</word>
             </root>
             "#;
 
             let doc = Document::parse(doc_raw.as_bytes()).unwrap();
             let root = doc.root.unwrap();
 
-            assert_eq!(root.find_text("a/deep/tree/leaf"), "hello");
+            assert_eq!(root.find_value("number").unwrap(), Some(2));
 
-        }
+            assert_eq!(root.find_value("word").unwrap(), Some("hello".to_string()));
 
-        #[test]
-        fn find_int() {
-
-            let doc_raw = r#"
-            <root>
-                <a>
-                    <deep>
-                        <tree>
-                            <leaf>1</leaf>
-                        </tree>
-                    </deep>
-                </a>
-                <child>2</child>
-            </root>
-            "#;
-
-            let doc = Document::parse(doc_raw.as_bytes()).unwrap();
-            let root = doc.root.unwrap();
-
-            assert_eq!(root.find_int("a/deep/tree/leaf"), 1);
-
+            let cant_parse: Result<Option<i32>> = root.find_value("word");
+            println!("cant parse was {:?}", cant_parse);
+            match cant_parse.unwrap_err() {
+                Error(ErrorKind::ValueFromStr(_), _) => {},
+                _ => panic!("Error should have been ValueFromStr"),
+            }
         }
     }
 
@@ -417,7 +402,7 @@ mod read {
             root.children.push(c3);
             root.children.push(c4);
 
-            let doc_ref = Document{
+            let doc_ref = Document {
                 version: XmlVersion::Version11,
                 encoding: "UTF-8".to_owned(),
                 root: Some(root),
