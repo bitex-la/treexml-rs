@@ -92,8 +92,7 @@ mod write {
                 ..Document::default()
             };
 
-            let doc_ref =
-                concat!(
+            let doc_ref = concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root>text</root>",
             );
@@ -113,8 +112,7 @@ mod write {
                 ..Document::default()
             };
 
-            let doc_ref =
-                concat!(
+            let doc_ref = concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root>&lt;tag /></root>",
             );
@@ -140,8 +138,7 @@ mod write {
                 ..Document::default()
             };
 
-            let doc_ref =
-                concat!(
+            let doc_ref = concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root><![CDATA[data]]></root>",
             );
@@ -161,8 +158,7 @@ mod write {
                 ..Document::default()
             };
 
-            let doc_ref =
-                concat!(
+            let doc_ref = concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
                 "<root><![CDATA[<tag />]]></root>",
             );
@@ -188,9 +184,9 @@ mod write {
                 ]),
             ]);
 
-            let doc = Document{
+            let doc = Document {
                 root: Some(root),
-                .. Document::default()
+                ..Document::default()
             };
 
             let doc_ref = concat!(

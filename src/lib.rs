@@ -138,7 +138,9 @@ impl Element {
 
     /// Insert a single attribute in the attributes `HashMap`
     pub fn attr<K, V>(mut self, key: K, value: V) -> Element
-        where K: ToString, V: ToString
+    where
+        K: ToString,
+        V: ToString,
     {
         self.attributes.insert(key.to_string(), value.to_string());
         self
@@ -146,7 +148,8 @@ impl Element {
 
     /// Set a text for this `Element`
     pub fn text<S>(mut self, text: S) -> Element
-        where S: ToString
+    where
+        S: ToString,
     {
         self.text = Some(text.to_string());
         self
@@ -154,7 +157,8 @@ impl Element {
 
     /// Add CDATA tags and content to this `Element`
     pub fn cdata<S>(mut self, cdata: S) -> Element
-        where S: ToString
+    where
+        S: ToString,
     {
         self.cdata = Some(cdata.to_string());
         self
