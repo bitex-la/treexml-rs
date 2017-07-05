@@ -174,17 +174,17 @@ mod write {
     }
 
     mod builder {
-        use treexml::{Document, Element};
+        use treexml::{Document, Element as E};
 
         #[test]
         fn incremental_builder() {
 
-            let root = Element::new("root").children(vec![
-                Element::new("list").children(vec![
-                    Element::new("child"),
-                    Element::new("child").attr("class", "foo").text("bar"),
-                    Element::new("child").attr("class", 22.to_string())
-                        .text(11.to_string()),
+            let root = E::new("root").children(vec![
+                E::new("list").children(vec![
+                    E::new("child"),
+                    E::new("child").cdata("test data here"),
+                    E::new("child").attr("class", "foo").text("bar"),
+                    E::new("child").attr("class", 22).text(11),
                 ]),
             ]);
 
@@ -198,6 +198,7 @@ mod write {
                 "<root>\n",
                 "  <list>\n",
                 "    <child />\n",
+                "    <child><![CDATA[test data here]]></child>\n",
                 "    <child class=\"foo\">bar</child>\n",
                 "    <child class=\"22\">11</child>\n",
                 "  </list>\n",

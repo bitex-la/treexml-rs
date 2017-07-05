@@ -59,6 +59,7 @@ use std::io::{Read, Write};
 use std::iter::Filter;
 use std::slice::{Iter, IterMut};
 use std::str::FromStr;
+use std::string::ToString;
 
 pub use errors::*;
 
@@ -135,31 +136,27 @@ impl Element {
         }
     }
 
+    /// Insert a single attribute in the attributes `HashMap`
     pub fn attr<K, V>(mut self, key: K, value: V) -> Element
-        where K: Into<String>, V: Into<String>
+        where K: ToString, V: ToString
     {
-        self.attributes.insert(key.into(), value.into());
+        self.attributes.insert(key.to_string(), value.to_string());
         self
     }
 
+    /// Set a text for this `Element`
     pub fn text<S>(mut self, text: S) -> Element
-        where S: Into<String>
+        where S: ToString
     {
-        self.text = Some(text.into());
+        self.text = Some(text.to_string());
         self
     }
 
+    /// Add CDATA tags and content to this `Element`
     pub fn cdata<S>(mut self, cdata: S) -> Element
-        where S: Into<String>
+        where S: ToString
     {
-        self.cdata = Some(cdata.into());
-        self
-    }
-
-    pub fn prefix<S>(mut self, prefix: S) -> Element
-        where S: Into<String>
-    {
-        self.prefix = Some(prefix.into());
+        self.cdata = Some(cdata.to_string());
         self
     }
 
