@@ -9,7 +9,7 @@ To use `treexml`, add the following to your project's `Cargo.toml`
 
 ```toml
 [dependencies]
-treexml = "0.4"
+treexml = "0.6"
 ```
 
 The package exposes a crate named `treexml`.
@@ -64,7 +64,7 @@ fn main() {
 
 	let doc = Document{
 		root: Some(root),
-		.. Document::default()
+		..Document::default()
 	};
 
 	println!("{}", doc);

@@ -205,6 +205,24 @@ mod write {
 
         }
 
+        #[test]
+        fn incremental_build_multiline() {
+            let mut root = ElementBuilder::new("root");
+            root.attr("key", "value");
+            root.text("some-text");
+
+            let doc = Document {
+                root: Some(root.element()),
+                ..Document::default()
+            };
+
+            let doc_ref = concat!(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+                "<root key=\"value\">some-text</root>"
+            );
+
+            assert_eq!(doc.to_string(), doc_ref);
+        }
     }
 
 }
