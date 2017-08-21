@@ -140,6 +140,40 @@ impl Element {
         }
     }
 
+    /// Insert a single attribute in the attributes `HashMap`
+    pub fn attr<K, V>(mut self, key: K, value: V) -> Element
+    where
+        K: ToString,
+        V: ToString,
+    {
+        self.attributes.insert(key.to_string(), value.to_string());
+        self
+    }
+
+    /// Set a text for this `Element`
+    pub fn text<S>(mut self, text: S) -> Element
+    where
+        S: ToString,
+    {
+        self.text = Some(text.to_string());
+        self
+    }
+
+    /// Add CDATA tags and content to this `Element`
+    pub fn cdata<S>(mut self, cdata: S) -> Element
+    where
+        S: ToString,
+    {
+        self.cdata = Some(cdata.to_string());
+        self
+    }
+
+    /// Append children to this `Element`
+    pub fn children(mut self, mut children: Vec<Element>) -> Element {
+        self.children.append(&mut children);
+        self
+    }
+
     /// Parse the contents of an element
     fn parse<R: Read>(&mut self, mut reader: &mut xml::reader::EventReader<R>) -> Result<()> {
 
@@ -316,7 +350,7 @@ impl fmt::Display for Element {
             ..Document::default()
         };
         let mut v = Vec::<u8>::new();
-        doc.write_with(&mut v, false, "  ", true).unwrap();
+        doc.write_with(&mut v, false, "  ", true, true).unwrap();
         let s = String::from_utf8(v).unwrap();
         f.write_str(&s[..])
     }
@@ -409,7 +443,7 @@ impl Document {
     }
 
     pub fn write<W: Write>(&self, mut w: &mut W) -> Result<()> {
-        self.write_with(&mut w, true, "  ", true)
+        self.write_with(&mut w, true, "  ", true, true)
     }
 
     /// Writes a document to `w`
@@ -419,15 +453,19 @@ impl Document {
         document_decl: bool,
         indent_str: &'static str,
         indent: bool,
+        escape: bool,
     ) -> Result<()> {
 
         use xml::writer::{EmitterConfig, XmlEvent};
 
-        let mut writer = EmitterConfig::new()
+        let mut config = EmitterConfig::new()
             .perform_indent(indent)
             .write_document_declaration(document_decl)
-            .indent_string(indent_str)
-            .create_writer(w);
+            .indent_string(indent_str);
+
+        config.perform_escaping = escape;
+
+        let mut writer = config.create_writer(w);
 
         if document_decl {
             writer.write(XmlEvent::StartDocument {

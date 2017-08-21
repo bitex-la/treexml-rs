@@ -42,7 +42,7 @@ mod write {
             };
 
             let mut condensed = vec![];
-            doc.write_with(&mut condensed, false, "", false).unwrap();
+            doc.write_with(&mut condensed, false, "", false, true).unwrap();
 
             assert_eq!(
                 String::from_utf8(condensed).unwrap(),
@@ -221,7 +221,6 @@ mod write {
 
             assert_eq!(doc.to_string(), doc_ref);
         }
-
     }
 
 }
