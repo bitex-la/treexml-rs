@@ -346,7 +346,7 @@ impl fmt::Display for Element {
             ..Document::default()
         };
         let mut v = Vec::<u8>::new();
-        doc.write_with(&mut v, false, "  ", true).unwrap();
+        doc.write_with(&mut v, false, "  ", true, true).unwrap();
         let s = String::from_utf8(v).unwrap();
         f.write_str(&s[..])
     }
@@ -431,7 +431,7 @@ impl Document {
     }
 
     pub fn write<W: Write>(&self, mut w: &mut W) -> Result<()> {
-        self.write_with(&mut w, true, "  ", true)
+        self.write_with(&mut w, true, "  ", true, true)
     }
 
     /// Writes a document to `w`
@@ -441,15 +441,19 @@ impl Document {
         document_decl: bool,
         indent_str: &'static str,
         indent: bool,
+        escape: bool,
     ) -> Result<()> {
 
         use xml::writer::{EmitterConfig, XmlEvent};
 
-        let mut writer = EmitterConfig::new()
+        let mut config = EmitterConfig::new()
             .perform_indent(indent)
             .write_document_declaration(document_decl)
-            .indent_string(indent_str)
-            .create_writer(w);
+            .indent_string(indent_str);
+
+        config.perform_escaping = escape;
+
+        let mut writer = config.create_writer(w);
 
         if document_decl {
             writer.write(XmlEvent::StartDocument {
