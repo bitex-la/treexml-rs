@@ -390,6 +390,20 @@ impl Document {
             ..Self::default()
         }
     }
+    
+    /// Shortcut to write an element into a new String.
+    pub fn render(
+        mut root: ElementBuilder, 
+        document_decl: bool,
+        indent_str: &'static str,
+        indent: bool,
+        escape: bool,
+    ) -> Result<String> {
+		let doc = Self::build(&mut root);
+		let mut stream = vec![];
+		doc.write_with(&mut stream, document_decl, indent_str, indent, escape)?;
+		String::from_utf8(stream).chain_err(|| "Non utf-8 on Document::render")
+    }
 
     /// Parse data from a reader to construct an XML document
     ///
@@ -480,7 +494,6 @@ impl Document {
         }
 
         Ok(())
-
     }
 }
 

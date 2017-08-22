@@ -50,6 +50,20 @@ mod write {
             );
         }
 
+        #[test]
+        fn document_render_helper() {
+            let mut root = Element::new("root");
+            let child = Element::new("child");
+            root.children.push(child);
+
+            let rendered = Document
+                ::render(root.into(), false, "  ", true, false).unwrap();
+
+            assert_eq!(
+                rendered,
+                "<root>\n  <child />\n</root>"
+            );
+        }
     }
 
     mod element {
@@ -181,14 +195,18 @@ mod write {
 
             let preexisting: Element = E::new("preexisting").element();
 
-            let doc = Document::build(E::new("root").children(vec![
+            let mut element = E::new("root");
+            element.children(vec![
                 E::new("list").children(vec![
-                        &mut preexisting.into(),
-                        &mut E::new("child"),
-                        E::new("child").attr("class", "foo").text("bar"),
-                        E::new("child").attr("class", 22).text(11),
-                    ]),
-            ]));
+                    &mut preexisting.into(),
+                    &mut E::new("child"),
+                    E::new("child").attr("class", "foo").text("bar"),
+                    E::new("child").attr("class", 22).text(11),
+                ]),
+            ]);
+            element.child(E::new("single-child").text(33));
+
+            let doc = Document::build(&mut element);
 
             let doc_ref = concat!(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
@@ -199,6 +217,7 @@ mod write {
                 "    <child class=\"foo\">bar</child>\n",
                 "    <child class=\"22\">11</child>\n",
                 "  </list>\n",
+                "  <single-child>33</single-child>\n",
                 "</root>"
             );
 
@@ -222,5 +241,4 @@ mod write {
             assert_eq!(doc.to_string(), doc_ref);
         }
     }
-
 }
