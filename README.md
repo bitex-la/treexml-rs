@@ -49,7 +49,7 @@ fn main() {
 ```rust
 extern crate treexml;
 
-use treexml::{Document, ElementBuilder as E};
+use treexml::{Document, Element as E};
 
 fn main() {
     let mut something = E::new("something");

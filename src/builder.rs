@@ -62,6 +62,10 @@ impl ElementBuilder {
         self
     }
 
+    pub fn child(&mut self, child: &mut ElementBuilder) -> &mut ElementBuilder{
+        self.children(vec![child])
+    }
+
     /// Creates an `Element` from the builder
     pub fn element(&self) -> Element {
         self.element.clone()
