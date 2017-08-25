@@ -55,7 +55,6 @@ extern crate xml;
 mod builder;
 
 use std::borrow::Cow;
-use std::collections::HashMap;
 use std::fmt;
 use std::io::{Read, Write};
 use std::iter::Filter;
@@ -106,7 +105,7 @@ pub struct Element {
     /// Tag name: `for-each` in `xsl:for-each`
     pub name: String,
     /// Tag attributes
-    pub attributes: HashMap<String, String>,
+    pub attributes: Vec<(String, String)>,
     /// A vector of child elements
     pub children: Vec<Element>,
     /// Contents of the element
@@ -120,7 +119,7 @@ impl Default for Element {
         Element {
             prefix: None,
             name: "tag".to_owned(),
-            attributes: HashMap::new(),
+            attributes: Vec::new(),
             children: Vec::new(),
             text: None,
             cdata: None,
@@ -150,13 +149,13 @@ impl Element {
             match ev {
                 XmlEvent::StartElement { name, attributes, .. } => {
 
-                    let mut attr_map = HashMap::new();
+                    let mut attr_map = vec![];
                     for attr in attributes {
                         let attr_name = match attr.name.prefix {
                             Some(prefix) => format!("{}:{}", prefix, attr.name.local_name),
                             None => attr.name.local_name,
                         };
-                        attr_map.insert(attr_name, attr.value);
+                        attr_map.push((attr_name, attr.value));
                     }
 
                     let mut child = Element {
@@ -215,13 +214,9 @@ impl Element {
         use xml::namespace::Namespace;
 
         let name = Name::local(&self.name);
-        let mut attributes = Vec::with_capacity(self.attributes.len());
-        for (k, v) in &self.attributes {
-            attributes.push(Attribute {
-                name: Name::local(k),
-                value: v,
-            });
-        }
+        let attributes = self.attributes.iter().map(|&(ref k, ref v)|{
+            Attribute{ name: Name::local(&k), value: &v }
+        }).collect();
 
         let namespace = Namespace::empty();
 
@@ -380,13 +375,13 @@ impl Document {
 
                     // Start of the root element
 
-                    let mut attr_map = HashMap::new();
+                    let mut attr_map = vec![];
                     for attr in attributes {
                         let attr_name = match attr.name.prefix {
                             Some(prefix) => format!("{}:{}", prefix, attr.name.local_name),
                             None => attr.name.local_name,
                         };
-                        attr_map.insert(attr_name, attr.value);
+                        attr_map.push((attr_name, attr.value));
                     }
 
                     let mut root = Element {

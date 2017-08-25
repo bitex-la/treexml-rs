@@ -31,10 +31,7 @@ impl ElementBuilder {
         K: ToString,
         V: ToString,
     {
-        self.element.attributes.insert(
-            key.to_string(),
-            value.to_string(),
-        );
+        self.element.attributes.push((key.to_string(), value.to_string()));
         self
     }
 

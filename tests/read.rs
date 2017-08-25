@@ -142,7 +142,7 @@ mod read {
             let root = doc.root.unwrap();
 
             let mut child = Element::new("child");
-            child.attributes.insert("attr_a".to_owned(), "1".to_owned());
+            child.attributes.push(("attr_a".to_owned(), "1".to_owned()));
 
             assert_eq!(root.find_child(|t| t.name == "child"), Some(&child));
 
@@ -162,7 +162,7 @@ mod read {
             let root = doc.root.unwrap();
 
             let mut child = Element::new("child");
-            child.attributes.insert("attr_a".to_owned(), "1".to_owned());
+            child.attributes.push(("attr_a".to_owned(), "1".to_owned()));
 
             assert_eq!(root.find_child(|t| t.name == "child"), Some(&child));
 
@@ -182,12 +182,12 @@ mod read {
 
             {
                 let mut child = root.find_child_mut(|t| t.name == "child").unwrap();
-                let mut attr_a = child.attributes.get_mut(&"attr_a".to_owned()).unwrap();
-                *attr_a = "2".to_owned();
+                let mut attr_a = child.attributes.get_mut(0).unwrap();
+                *attr_a = ("attr_a".to_string(), "2".to_string());
             }
 
             let mut child = Element::new("child");
-            child.attributes.insert("attr_a".to_owned(), "2".to_owned());
+            child.attributes.push(("attr_a".to_owned(), "2".to_owned()));
 
             assert_eq!(root.find_child(|t| t.name == "child"), Some(&child));
 
@@ -384,17 +384,17 @@ mod read {
             let mut root = Element::new("root");
 
             let mut c1 = Element::new("child");
-            c1.attributes.insert("attr_a".to_owned(), "1".to_owned());
+            c1.attributes.push(("attr_a".to_owned(), "1".to_owned()));
             c1.text = Some("content".to_owned());
 
             let mut c2 = Element::new("child");
-            c2.attributes.insert("attr_a".to_owned(), "2".to_owned());
+            c2.attributes.push(("attr_a".to_owned(), "2".to_owned()));
 
             let mut c3 = Element::new("child");
-            c3.attributes.insert("attr_a".to_owned(), "3".to_owned());
+            c3.attributes.push(("attr_a".to_owned(), "3".to_owned()));
 
             let mut c4 = Element::new("child");
-            c4.attributes.insert("attr_a".to_owned(), "4".to_owned());
+            c4.attributes.push(("attr_a".to_owned(), "4".to_owned()));
             c4.cdata = Some("foo".to_owned());
 
             root.children.push(c1);
