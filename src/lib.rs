@@ -50,7 +50,7 @@ extern crate error_chain;
 
 mod errors;
 
-extern crate xml;
+pub extern crate xml;
 
 mod builder;
 
