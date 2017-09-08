@@ -145,7 +145,7 @@ impl Element {
         K: ToString,
         V: ToString,
     {
-        self.attributes.insert(key.to_string(), value.to_string());
+        self.attributes.push((key.to_string(), value.to_string()));
         self
     }
 
